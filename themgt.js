@@ -3,7 +3,7 @@ var fs = require('fs');
 
 var app = express();
 
-var map = [];
+var map = {};
 
 app.listen(1337);
 
@@ -22,13 +22,28 @@ function readSource(res) {
 }
 
 function buildMap(data, res) {
-	var sentences = data.split('. ');
+    fs.readFile('./map.json', 'utf8', function(error, fileData) {
+        if (error) {
 
-	for (i = 0; i < sentences.length; i++) {
-		addSentenceToMap(sentences[i]);
-	}
+            var sentences = data.split('. ');
+
+        	for (var i = 0; i < sentences.length; i++) {
+        		addSentenceToMap(sentences[i]);
+        	}
 	
-	res.send(generateSentences())
+            fs.writeFile('./map.json', JSON.stringify(map), function (err) {
+                console.log("Map file write error: " + err)
+            })
+                        
+        }
+        else {
+            map = JSON.parse(fileData)
+        }
+        res.send(generateSentences())
+        
+    })
+    
+    
 }
 
 function addSentenceToMap(sentence) {
@@ -36,19 +51,26 @@ function addSentenceToMap(sentence) {
 	
 	for (i = 0; i < wordArray.length; i++) {
 		var word = wordArray[i];
-		
+		if (word == 'some' || word == 'sort' || word == 'every') {
+		    word = 'foo';
+		}
 		var nextWord = "$";
 		
 		if (i  < wordArray.length - 1) {
 			nextWord = wordArray[i+1]
 		}
 		
-		var transitionsArray = map[word]
+        if(nextWord == 'some' || nextWord == 'sort' || nextWord == 'every') {
+            nextWord = 'foo';
+        }
+
+		var transitionsArray = map[word];
+
 		if (transitionsArray == null) {
 			transitionsArray = [];
 		}
-		
-		transitionsArray.push(nextWord)
+
+		transitionsArray.push(nextWord);
 		
 		map[word] = transitionsArray
 	}
@@ -95,7 +117,7 @@ var maxSentences = 20;
 
 function generateSentences() {
 	var result = "";
-	for (i = 0; i < maxSentences; i++) {
+	for (var i = 0; i < maxSentences; i++) {
 		result += generateSentence();
 	}
 
