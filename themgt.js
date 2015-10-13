@@ -112,8 +112,8 @@ function generateSentence() {
 	return result + ". ";
 } 
 
-var minSentences = 10;
-var maxSentences = 20;
+var minSentences = 5;
+var maxSentences = 10;
 
 function generateSentences() {
 	var result = "";
