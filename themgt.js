@@ -63,22 +63,35 @@ function addSentenceToMap(sentence) {
             nextWord = 'foo';
         }
 
-		var transitionsArray = map[word];
+		var transitionsHistogram = map[word];
 
-		if (transitionsArray == null) {
-			transitionsArray = [];
+		if (transitionsHistogram == null) {
+			transitionsHistogram = {};
 		}
-
-		transitionsArray.push(nextWord);
 		
-		map[word] = transitionsArray
+		var wordFrequency = transitionsHistogram[nextWord];
+		if (wordFrequency == null) {
+			wordFrequency = 0
+		}
+		wordFrequency++;
+		transitionsHistogram[nextWord] = wordFrequency;
+		
+		map[word] = transitionsHistogram;
 	}
 }
 
 function generateNextWord(word) {
-	var transitionArray = map[word];
-	var p = (Math.random()*4294967296) % transitionArray.length;
-	return transitionArray[p]
+	var transitionHistogram = map[word];
+	var weightedWords = [];
+	for (nextWord in transitionHistogram) {
+		var frequency = transitionHistogram[nextWord];
+		for (var i = 0; i < frequency; i++) {
+			weightedWords.push(nextWord);
+		}
+	}
+	
+	var p = (Math.random()*4294967296) % weightedWords.length;
+	return weightedWords[p]
 }
 
 function randomWord() {
