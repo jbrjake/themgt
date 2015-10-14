@@ -98,8 +98,8 @@ function randomWord() {
 	return Object.keys(map)[(Math.random() *4294967296) % Object.keys(map).length];
 }
 
-var minSentenceLength = 6;
-var maxSentenceLength = 20;
+var minSentenceLength = 3;
+var maxSentenceLength = 30;
 
 function generateSentence() {
 	var currentWord = randomWord();
