@@ -25,8 +25,7 @@ function buildMap(data, res) {
     fs.readFile('./map.json', 'utf8', function(error, fileData) {
         if (error) {
 
-            var sentences = data.split('. ');
-
+            var sentences = data.match(/\(?[^\.\?\!]+[\.!\?]\)?/g);
         	for (var i = 0; i < sentences.length; i++) {
         		addSentenceToMap(sentences[i]);
         	}
@@ -50,14 +49,14 @@ function addSentenceToMap(sentence) {
 	var wordArray = sentence.split(" ");
 	
 	for (i = 0; i < wordArray.length; i++) {
-		var word = wordArray[i];
+		var word = wordArray[i].replace(/[.!?{}\"]/g,"").replace(/\s{2,}/g," ");
 		if (word == 'some' || word == 'sort' || word == 'every') {
 		    word = 'foo';
 		}
 		var nextWord = "$";
 		
 		if (i  < wordArray.length - 1) {
-			nextWord = wordArray[i+1]
+			nextWord = wordArray[i+1].replace(/[.!?{}\"]/g,"").replace(/\s{2,}/g," ")
 		}
 		
         if(nextWord == 'some' || nextWord == 'sort' || nextWord == 'every') {
